@@ -38,6 +38,12 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setPredefinedData(state, data) {
+      state.allFamilyInfo = {
+        ...state.allFamilyInfo,
+        ...data
+      };
+    },
     updateActiveKey(state, key) {
       state.activeKey = key;
     },
