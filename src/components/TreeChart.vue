@@ -89,9 +89,7 @@ export default {
       this.$forceUpdate();
     },
     clickNode(nodeData, e){
-      console.log(nodeData)
-      console.log(e)
-      this.$emit('node-click',{nodeData, e})
+      this.$emit('click-node',nodeData, e)
     }
   }
 };
