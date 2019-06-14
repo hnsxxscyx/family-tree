@@ -1,6 +1,8 @@
 <template>
 	<div class="family-tree-wrapper">
-		<TreeChart :json="demoData" @click-node="clickNode"></TreeChart>
+		<div class="tree-wrapper">
+			<TreeChart :json="demoData" @click-node="clickNode"></TreeChart>
+		</div>
 		<div class="relation-wrapp">
 			<p>成员A:{{(memberA.data&&memberA.data.name)|| '点击选择节点选择成员'}}</p>
 			<p>成员B:{{(memberB.data&&memberB.data.name)|| '点击选择节点选择成员'}}</p>
@@ -21,8 +23,8 @@ export default {
 	created() {
 		const list = this.getTreeData();
 		this.demoData = {
-			name: `${this.activeFalimy}族谱`,
-			image_url: "root.png",
+			name: `${this.activeFalimy}家谱`,
+			image_url: "home.png",
 			children: list
 		};
 	},
@@ -167,7 +169,7 @@ export default {
 									break;
 								}
 								case -1: {
-									relation = `表${memberB.data.sex === "男" ? "哥哥" : "姐姐"}`;
+									relation = `表${memberB.data.sex === "男" ? "哥" : "姐"}`;
 									break;
 								}
 								default:
@@ -183,7 +185,12 @@ export default {
 									break;
 								}
 								case -2: {
-									relation = `侄${memberB.data.sex === "男" ? "孙" : "孙女"}`;
+									relation = `${
+										findParentData(memberB.data.motherId).motherId ==
+										memberA.data.id
+											? ""
+											: "侄"
+									}${memberB.data.sex === "男" ? "孙" : "孙女"}`;
 									break;
 								}
 								default:
@@ -193,14 +200,18 @@ export default {
 							switch (differentIndex) {
 								case 1: {
 									if (isFatherRelation) {
-										const call = compareDate(
+										const manCall = compareDate(
 											aFatherData.birthday,
 											memberB.data.birthday
 										)
 											? "叔叔"
 											: "大伯";
+										const womanCall =
+											memberB.data.id == memberA.data.motherId
+												? "妈妈"
+												: "姑姑";
 										relation = `${
-											memberB.data.sex === "男" ? `${call}` : "姑"
+											memberB.data.sex === "男" ? manCall : womanCall
 										}`;
 									} else {
 										relation = `${memberB.data.sex === "男" ? "舅舅" : "姨姨"}`;
@@ -211,7 +222,7 @@ export default {
 									if (isFatherRelation) {
 										relation = `${memberB.data.sex === "男" ? `爷爷` : "姑奶"}`;
 									} else {
-										relation = `${memberB.data.sex === "男" ? "姥爷" : "姨姥"}`;
+										relation = `${memberB.data.sex === "男" ? "姥爷" : "姥姥"}`;
 									}
 									break;
 								}
@@ -374,4 +385,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+	.family-tree-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
 </style>
