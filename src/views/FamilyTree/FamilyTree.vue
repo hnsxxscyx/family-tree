@@ -1,5 +1,15 @@
 <template>
+<div class="family-tree-wrapper">
   <TreeChart :json="demoData" @click-node="clickNode"></TreeChart>
+    <div class="relation-wrapp">
+      <p>成员A:{{(memberA.data&&memberA.data.name)|| '点击选择节点选择成员'}}</p>
+      <p>成员B:{{(memberB.data&&memberB.data.name)|| '点击选择节点选择成员'}}</p>
+    </div>
+    <div class="button-wrapper">
+      <el-button type="primary" @click="compareRelation">比较关系</el-button>
+      <el-button type="danger" @click="clearMember">清除成员</el-button>
+    </div>
+  </div>
 </template>
 <script type="text/ecmascript6">
 import TreeChart from "@/components/TreeChart.vue";
@@ -10,7 +20,6 @@ export default {
   },
   created () {
     const list = this.getTreeData()
-    console.log(list)
     this.demoData = {
       name: `${this.activeFalimy}族谱`,
       image_url: "root.png",
@@ -20,41 +29,63 @@ export default {
   data() {
     return {
       demoData: {
-        // name: "root",
-        // image_url: "https://static.refined-x.com/avat.jpg",
-        // children: [
-        //   {
-        //     name: "children1",
-        //     image_url: "https://static.refined-x.com/avat1.jpg"
-        //   },
-        //   {
-        //     name: "children2",
-        //     image_url: "https://static.refined-x.com/avat2.jpg",
-        //     mate: {
-        //       name: "mate",
-        //       image_url: "https://static.refined-x.com/avat3.jpg"
-        //     },
-        //     children: [
-        //       {
-        //         name: "grandchild",
-        //         image_url: "https://static.refined-x.com/avat.jpg"
-        //       },
-        //       {
-        //         name: "grandchild2",
-        //         image_url: "https://static.refined-x.com/avat1.jpg"
-        //       },
-        //       {
-        //         name: "grandchild3",
-        //         image_url: "https://static.refined-x.com/avat2.jpg"
-        //       }
-        //     ]
-        //   }
-        // ]
-      }
+      },
+      memberA:{},
+      memberB:{}
     };
   },
   methods: {
-    clickNode(e) {
+    clickNode(data, e) {
+      if(Object.keys(this.memberA).length===0){
+        this.memberA = {data,domNode:e.target}
+      } else if(Object.keys(this.memberB).length===0){
+        this.memberB = {data,domNode:e.target}
+      }
+    },
+    clearMember(){
+      this.memberA = {}
+      this.memberB = {}
+    },
+    compareRelation(){
+      const {memberA,memberB}= this
+      const findNodeRoot = (node, rootTagName="TABLE")=>{
+        while(node && node.nodeName!==rootTagName ){
+          node = node.parentNode
+        }
+        return node
+      }
+      const getNodeIndex = (node, root, tagName="TABLE")=>{
+        let index = 0
+        while(node!==root ){
+          if(node.nodeName===tagName){
+            index++
+          }
+          node = node.parentNode
+        }
+        return index
+      }
+      let relation = ''
+      if(memberA.data.id ===memberB.data.id){
+        relation = '这俩人是一个人呀，别闹'
+      } else {
+        const nodeA = findNodeRoot(memberA.domNode)
+        const nodeB = findNodeRoot(memberB.domNode)
+        const isImmediate = nodeA.contains(nodeB)
+        const treeRootNode = document.querySelector('.family-tree-wrapper table')
+        const nodeAIndex = getNodeIndex(nodeA,treeRootNode)
+        const nodeBIndex = getNodeIndex(nodeB,treeRootNode)
+        const differentIndex = nodeAIndex-nodeBIndex
+        const immediateStructure = {
+          '-1':
+        }
+        const notImmediateStructure = {}
+        if(isImmediate){
+          
+        } else {
+
+        }
+      }
+      this.$alert(relation,'关系判定')
 
     },
     getTreeData(){
