@@ -37,10 +37,14 @@ export default {
 	},
 	methods: {
 		clickNode(data, e) {
-			if (Object.keys(this.memberA).length === 0) {
-				this.memberA = { data, domNode: e.target };
-			} else if (Object.keys(this.memberB).length === 0) {
-				this.memberB = { data, domNode: e.target };
+			if (data.name === `${this.activeFalimy}家谱`) {
+				this.$message.error("家谱根节点不是成员不能被选中哦");
+			} else {
+				if (Object.keys(this.memberA).length === 0) {
+					this.memberA = { data, domNode: e.target };
+				} else if (Object.keys(this.memberB).length === 0) {
+					this.memberB = { data, domNode: e.target };
+				}
 			}
 		},
 		clearMember() {
@@ -388,6 +392,6 @@ export default {
 	.family-tree-wrapper {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		align-items: center;
 	}
 </style>
